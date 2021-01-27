@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const posts = require('./posts');
-app.use('./posts', posts);
+app.use('/api/posts', posts);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log('server started on port 3000'));
