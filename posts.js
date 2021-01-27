@@ -11,6 +11,16 @@ router.get('/', async (req, res) => {
 });
 
 
+//get one post
+router.get('/:id', async (req, res) => {
+    const posts = await loadPostsCollection();
+    await posts.findOne({_id: new mongodb.ObjectID(req.params.id)}, (e, result) => {
+        if (e) return next (e)
+        res.send(result)
+    })
+});
+
+
 //Add Post 
 router.post('/', async (req, res) => {
     const posts = await loadPostsCollection();
@@ -27,6 +37,20 @@ router.delete('/:id', async (req, res) => {
     await posts.deleteOne({_id: new mongodb.ObjectID(req.params.id)});
     res.status(200).send();
 });
+
+
+// Update a post with PUT
+router.put('/:id', (req, res, next) => {
+    req.posts.update(
+    {_id: new mongodb.ObjectID(req.params.id)},
+    {$set: req.body},
+    {safe: true, multi: false},
+    (e, result) => {
+        if (e) return next(e)
+        res.send((result.result.n === 1) ? {msg:'success'} : {msg: 'error'})
+    })
+});
+
 
 
 async function loadPostsCollection() {
