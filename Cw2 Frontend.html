@@ -172,5 +172,18 @@
 
 			},
 		});
+
+		let store = new Vue({
+			data: {products: {} },
+			created: function(){
+				fetch('https://individualcw2.herokuapp.com/coursework2/orders').then(
+					function (response) {
+						response.json().then(
+							function (json) {
+								store.products = json;
+							});
+					})
+			}
+		});
 	</script>
 </html>
