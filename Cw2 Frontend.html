@@ -1,0 +1,176 @@
+﻿<html>
+	<head>
+		<title>Vue.js Classes</title>
+		<script src="classes.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<link rel="stylesheet" href="stylesheet.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+
+	<body>
+		<div id="app">
+			<header>
+				<h1> {{ sitename }}</h1>
+				<button @click='showCheckout' v-if="cartItemCount > 0">
+					{{cartItemCount}} Shopping Cart </button>
+				<span v-else>Book a Class!</span>
+				<button disabled = 'disabled' v-else>Shopping Cart</button>
+			</header>
+			<main> 
+				<div id="showClass" v-if='showClass'>
+					<!-- using the for loop to return sorted classes and list will be sorted by classes -->
+					<div v-for="class1 in sortedClasses">
+						<h2 v-text ="class1.title"></h2>
+							<figure>
+								<img v-bind:src="class1.image" style="height:200px" width="300px">
+							</figure>
+						<p v-html ="class1.location"></p>
+						<p> Price {{ class1.price }} </p>
+					
+					
+
+						<!-- Add to Cart functionality -->
+						<button @click='addToCart(class1)' v-if='canAddToCart(class1)'> Add to Cart </button>			
+							<span v-if="class1.availableSpaces === cartCount(class1.id)">
+							No more spaces available!
+							</span>
+							<span v-else-if="class1.availableSpaces - cartCount(class1.id) < 5">
+							Only {{class1.availableSpaces - cartCount(class1.id)}} left!!
+							</span>
+							<span v-else>Book class!</span>
+							<button disabled ='disabled' v-else>Add to Cart</button>
+					</div>
+				</div>
+				<div v-else>
+					<button @click='showCheckout'> Back </button>
+					<h2>Checkout</h2>
+
+					<p>
+						<strong> Classes selected: </strong>
+
+					</p>
+
+					<p>
+						<strong>First Name:</strong>
+						<input v-model="book.firstName" type="text"/>
+					</p>
+					<p>
+						<strong>Last Name:</strong>
+						<input v-model="book.lastName" type="text"/>
+					</p>
+					<p>
+						<strong>Address:</strong>
+						<input v-model='book.address'/>
+					</p>
+					<p>
+						<strong>City:</strong>
+						<input v-model='book.city'/>
+					</p>
+					<p>
+						<strong>Postal Code:</strong>
+						<input v-model='book.postCode'/>
+					</p>
+					<p>
+						<strong>Mobile Number:</strong>
+						<input v-model.number='book.mobNumber' type="number"/>
+					</p>
+					<p>
+						<strong>Telephone Number:</strong>
+						<input v-model.number='book.telNumber' type="number"/>
+					</p>
+
+						<h2>Booking Information</h2>
+						<p>First Name:{{book.firstName}}</p>
+						<p>Last Name: {{book.lastName}}</p>
+						<p>Address: {{book.address}}</p>
+						<p>City: {{book.city}}</p>
+						<p>Post Code: {{book.postCode}}</p>
+						<p>Mobile Number: {{book.mobNumber}}</p> 
+						<p>Telephone Number: {{book.telNumber}}</p>
+
+						<button v-on:click="submitForm" >Confirm Booking </button>
+						<span v-if="book.firstName === ''">
+						Fill out your Information!
+						</span>
+						<button disabled ='disabled' v-else>Confirm Booking</button>
+						<span v-else-if="book.mobNumber === ''">
+						Fill out your Information!
+						</span>
+						<button disabled ='disabled' v-else>Confirm Booking</button>
+					</div>
+			</main>
+		</div>
+	</body>
+
+	<script>	
+		var webstore = new Vue({
+			el: '#app',
+			data: {
+				showClass: true,
+				sitename: 'Online Classes',
+				cart: [], //array for storing items in the shopping Cart
+				book: {
+					firstName: "",
+					lastName: "",
+					address: "",
+					city: "",
+					postCode: "",
+					mobNumber: "",
+					telNumber: "",
+				},
+				classes: classes,
+			},
+			methods:{
+				addToCart: function (class1) {
+					this.cart.push(class1.id);
+				},
+
+				addToCheckOutCart(class1){
+					this.addToCheckOutCart.push(class1);
+				},
+
+				showCheckout: function(){
+					this.showClass = this.showClass ? false : true;
+				},
+				submitForm(){
+					alert('Booking has been placed')
+				},
+
+				canAddToCart: function(class1){
+					return class1.availableSpaces > this.cartCount(class1.id);
+				},
+
+				cartCount(id){
+					let count = 0;
+					for (let i = 0; i < this.cart.length; i++){
+						if(this.cart[i] === id){
+							count++
+						}
+					}
+					return count;
+				},
+
+
+			},
+			computed:{
+				cartItemCount: function(){
+					return this.cart.length;
+				},
+
+				//sorting classes by Price
+				sortedClasses(){
+					let classesArray = this.classes.slice(0);
+					function compare (a, b){
+						if(a.price > b.price)
+						return 1;
+						if (a.price < b.price)
+						return -1;
+						return 0;
+					}
+					return classesArray.sort(compare);
+				}
+
+			},
+		});
+	</script>
+</html>
